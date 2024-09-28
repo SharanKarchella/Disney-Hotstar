@@ -10,7 +10,6 @@ import {
 } from "react-icons/hi2";
 import { HiPlus, HiDotsVertical } from "react-icons/hi";
 import { useNavigate } from "react-router-dom";
-import Login from "../pages/login";
 import { clearauths } from "../features/todo/todoSlice";
 import { useDispatch } from "react-redux";
 
