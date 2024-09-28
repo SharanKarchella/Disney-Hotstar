@@ -7,8 +7,7 @@ import WatchList from "./pages/WatchList";
 import Favourite from "./pages/Favourite";
 import Header from "./Components/Header.jsx";
 import MovieView from "./pages/MovieView.jsx";
-import Login from "./pages/login.jsx";
-
+import Login from "./pages/Login.jsx";
 
 function App() {
   return (
