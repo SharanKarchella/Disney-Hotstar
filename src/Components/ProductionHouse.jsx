@@ -1,5 +1,4 @@
-import React from "react";
-
+import React, { useRef } from "react";
 import disney from "./../assets/images/disney.png";
 import pixar from "./../assets/images/pixar.png";
 import marvel from "./../assets/images/marvel.png";
@@ -18,14 +17,15 @@ import { useDispatch } from "react-redux";
 function ProductionHouse() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const ProductionHouse = [
+
+  const productionHouses = [
     {
       id: 1,
       name: "DISNEY UNIVERSE",
       image: disney,
       video: disneyV,
       description:
-        "Disney ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum",
+        "Disney ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua...",
     },
     {
       id: 2,
@@ -33,7 +33,7 @@ function ProductionHouse() {
       image: pixar,
       video: pixarV,
       description:
-        "Pixar ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum",
+        "Pixar ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua...",
     },
     {
       id: 3,
@@ -41,7 +41,7 @@ function ProductionHouse() {
       image: marvel,
       video: marvelV,
       description:
-        "Marvel ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum",
+        "Marvel ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua...",
     },
     {
       id: 4,
@@ -49,7 +49,7 @@ function ProductionHouse() {
       image: starwar,
       video: starwarsV,
       description:
-        "StarWars ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum",
+        "StarWars ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua...",
     },
     {
       id: 5,
@@ -57,35 +57,72 @@ function ProductionHouse() {
       image: nationalG,
       video: nationalGV,
       description:
-        "National-Geographic ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum",
+        "National-Geographic ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua...",
     },
   ];
 
+  // Function to handle navigation and description dispatch
+  const handleNavigation = (item) => {
+    const description = item.description;
+    dispatch(cleardescs());
+    dispatch(adddesc({ description }));
+    navigate("/movieview", { state: { movie: item } });
+  };
+
   return (
     <div className="flex gap-2 md:gap-5 p-2 px-5 md:px-16">
-      {ProductionHouse.map((item) => (
-        <div
-          onClick={() => {
-            const description = item.description;
-            //navigate("/movieview");
-            dispatch(cleardescs());
-            dispatch(adddesc({ description }));
-            navigate("/movieview", { state: { movie: item } });
-          }}
-          className="border-[2px] border-gray-600 rounded-lg hover:scale-110 transition-all duration-300 ease-in-out cursor-pointer relative shadow-xl shadow-gray-800 "
-        >
-          <video
-            src={item.video}
-            autoPlay
-            loop
-            playsInline
-            muted
-            className=" absolute z-0 top-0 rounded-md opacity-0 hover:opacity-50"
-          />
+      {productionHouses.map((item) => {
+        // Ref for each video
+        const videoRef = useRef(null);
 
-          <img src={item.image} className="w-full z-[1] opacity-100" />
-        </div>
-      ))}
+        // Function to play video on focus or hover
+        const handleVideoPlay = () => {
+          if (videoRef.current) {
+            videoRef.current.play();
+          }
+        };
+
+        // Function to pause video on blur or hover out
+        const handleVideoPause = () => {
+          if (videoRef.current) {
+            videoRef.current.pause();
+          }
+        };
+
+        return (
+          <div
+            key={item.id}
+            onClick={() => handleNavigation(item)} // Call the navigation function
+            className="border-[2px] border-gray-600 rounded-lg hover:scale-110 transition-all duration-300 ease-in-out cursor-pointer relative shadow-xl shadow-gray-800"
+            tabIndex={0} // For keyboard accessibility
+            role="button" // Explicitly declare as button for screen readers
+            aria-label={`View details for ${item.name}`} // For screen readers
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                handleNavigation(item); // Call the navigation function
+              }
+            }}
+            onMouseEnter={handleVideoPlay} // Play video on hover
+            onMouseLeave={handleVideoPause} // Pause video on hover out
+            onFocus={handleVideoPlay} // Play video on tab focus
+            onBlur={handleVideoPause} // Pause video when focus is lost
+          >
+            <video
+              ref={videoRef} // Using the same ref for each video element
+              src={item.video}
+              loop
+              playsInline
+              muted
+              className="absolute z-0 top-0 rounded-md opacity-0 hover:opacity-50"
+            />
+            <img
+              src={item.image}
+              className="w-full z-[1] opacity-100"
+              alt={`${item.name} logo`}
+            />{" "}
+          </div>
+        );
+      })}
     </div>
   );
 }
